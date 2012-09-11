@@ -26,7 +26,7 @@ class StrayBot(Bot):
         me = [p for p in players if p.index == self.index][0]
         my_list_index = players.index(me)
 
-        # Select me and the upcoming leaders
+        # Select myself and the upcoming leaders
         team = [me]
         for i in range(1, count):
             team.append(players[(my_list_index + i) % len(players)])
@@ -37,6 +37,14 @@ class StrayBot(Bot):
         return self._selectAsResistance(players, count)
 
     def vote(self, team):
+        # Last chance team vote
+        if self.game.tries == 5:
+            return True
+
+        # Shoot down teams of three that I'm not on
+        if len(self.game.team) == 3 and not self in self.game.team:
+            return False
+
         return self._vote[self.spy](team)
 
     def _voteAsResistance(self, team):
